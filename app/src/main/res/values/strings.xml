@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Drive Tracker</string>
+    <string name="new_trip">New Trip</string>
+    <string name="my_trips">My Trips</string>
+    <string name="description">Description</string>
+    <string name="edit_data">Edit Data</string>
+    <string name="delete_trip">Delete Trip</string>
 </resources>
