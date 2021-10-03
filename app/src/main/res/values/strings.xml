@@ -5,4 +5,7 @@
     <string name="description">Description</string>
     <string name="edit_data">Edit Data</string>
     <string name="delete_trip">Delete Trip</string>
+    <string name="start_manually">Start Manually</string>
+    <string name="odometer_reading">Odometer Reading</string>
+    <string name="start_time">Start Time:</string>
 </resources>

@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19021739130434784" />
         <entry key="app/src/main/res/layout/activity_trip_detail.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_trip_new.xml" value="0.19021739130434784" />
         <entry key="app/src/main/res/layout/layout_trip_row.xml" value="0.19021739130434784" />
       </map>
     </option>
