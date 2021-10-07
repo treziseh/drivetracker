@@ -8,8 +8,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 class TripAdapter(private val data: List<Trip>, private val context: Context, private val listener: (Trip) -> Unit) : RecyclerView.Adapter<TripAdapter.ViewHolder>() {
+    val shortMonths = arrayOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripAdapter.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater
@@ -25,11 +28,14 @@ class TripAdapter(private val data: List<Trip>, private val context: Context, pr
         private val tripEndTime: TextView = v.findViewById(R.id.tripEndTime)
 
         fun bind(item: Trip) {
-            tripMonth.text = item.startTime.month.toString()
-            tripDay.text = item.startTime.day.toString()
-            tripDistance.text = item.distance.toString()
-            tripStartTime.text = item.startTime.toString()
-            tripEndTime.text = item.endTime.toString()
+            tripMonth.text = shortMonths[item.startTime.get(Calendar.MONTH)]
+            tripDay.text = item.startTime.get(Calendar.DAY_OF_MONTH).toString()
+            val distanceDisplay = item.distance.toString() + " km"
+            tripDistance.text = distanceDisplay
+            val displayStart = item.startTime.get(Calendar.HOUR).toString() + ":" + item.startTime.get(Calendar.MINUTE).toString()
+            val displayEnd = item.endTime.get(Calendar.HOUR).toString() + ":" + item.endTime.get(Calendar.MINUTE).toString()
+            tripStartTime.text = displayStart
+            tripEndTime.text = displayEnd
             v.setOnClickListener { listener(item) }
         }
     }

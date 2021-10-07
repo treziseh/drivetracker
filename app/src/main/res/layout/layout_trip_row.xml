@@ -11,17 +11,22 @@
     <LinearLayout
         android:id="@+id/dateIcon"
         android:orientation="vertical"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_weight="2" >
 
         <TextView
             android:id="@+id/tripMonth"
+            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@color/orange_light" />
 
         <TextView
             android:id="@+id/tripDay"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -58,5 +63,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="2"
-        tools:srcCompat="@drawable/arrow_circle_right" />
+        app:srcCompat="@drawable/arrow_circle_right" />
 </LinearLayout>

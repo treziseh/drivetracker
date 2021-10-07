@@ -3,6 +3,7 @@ package com.harrytrezise.drivetracker
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,8 +19,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun newTrip() {
         val intent = Intent(this, NewTripActivity::class.java)
+        val newID = data.last().id + 1
         intent.run {
-            //putExtra()
+            this.putExtra("newID", newID)
             activityForResult.launch(this)
         }
     }
@@ -46,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showTripDetail(trip: Trip) {
         val intent = Intent(this, TripDetailActivity::class.java)
+        Log.i("TRIP", trip.toString())
         intent.putExtra("trip", trip)
         startActivity(intent)
     }
@@ -59,8 +62,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initData(): List<Trip> {
         val data = mutableListOf<Trip>()
-        data.add(Trip(1, Date(2021, 1, 13, 10, 40), Date(2021, 1, 13, 10, 50), 12000, 12015, 15, "Hamburger"))
-
+        data.add(Trip(0, GregorianCalendar(2021, 0, 2, 10, 40), GregorianCalendar(2021, 0, 13, 10, 50), 12000, 12015, 15, "Hamburger"))
+        data.add(Trip(1, GregorianCalendar(2020, 0, 2, 10, 40), GregorianCalendar(2021, 0, 13, 10, 50), 12000, 12015, 15, "Hamburger"))
         return data
     }
 }
