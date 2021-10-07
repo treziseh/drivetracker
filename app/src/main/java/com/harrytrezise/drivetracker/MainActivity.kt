@@ -19,10 +19,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun newTrip() {
         val intent = Intent(this, NewTripActivity::class.java)
-        val newID = data.last().id + 1
+        var newID = 0
+        if (data.isNotEmpty()) {
+            newID = data.last().id + 1
+        }
         intent.run {
             this.putExtra("newID", newID)
-            activityForResult.launch(this)
+            activityNewForResult.launch(this)
         }
     }
 
@@ -48,15 +51,52 @@ class MainActivity : AppCompatActivity() {
 
     private fun showTripDetail(trip: Trip) {
         val intent = Intent(this, TripDetailActivity::class.java)
-        Log.i("TRIP", trip.toString())
-        intent.putExtra("trip", trip)
-        startActivity(intent)
+        intent.run {
+            this.putExtra("trip", trip)
+            tripDetailForResult.launch(this)
+        }
     }
 
-    private val activityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val activityNewForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            val data = result.data
-            val trip = data?.getParcelableExtra<Trip>("returnTrip")
+            val returnData = result.data
+            val trip = returnData?.getParcelableExtra<Trip>("returnTrip")
+            trip?.let {
+                data = data + trip
+            }
+            setAdapter(data, tripList)
+        }
+    }
+
+    private val tripDetailForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val returnData = result.data
+            val trip = returnData?.getParcelableExtra<Trip>("returnTrip")
+            val delete = returnData?.getBooleanExtra("deleteTrip", false)
+            trip?.let {
+                if (delete == true) {
+                    data = data - data[it.id]
+                    updateIDs()
+                } else {
+                    data[it.id].id = it.id
+                    data[it.id].startTime = it.startTime
+                    data[it.id].endTime = it.endTime
+                    data[it.id].odoStart = it.odoStart
+                    data[it.id].odoEnd = it.odoEnd
+                    data[it.id].distance = it.distance
+                    data[it.id].description = it.description
+                }
+            }
+            setAdapter(data, tripList)
+        }
+    }
+
+    private fun updateIDs() {
+        val length = data.size
+        var i = 0
+        while (i < length) {
+            data[i].id = i
+            i += 1
         }
     }
 

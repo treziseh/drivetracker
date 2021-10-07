@@ -9,4 +9,5 @@
     <string name="odometer_reading">Odometer Reading</string>
     <string name="start_time">Start Time:</string>
     <string name="view_trip">View Trip</string>
+    <string name="edit_trip">Edit Trip</string>
 </resources>

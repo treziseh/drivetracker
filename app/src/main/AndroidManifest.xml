@@ -24,6 +24,9 @@
         <activity
             android:name=".TripDetailActivity"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".EditTripActivity"
+            android:parentActivityName=".TripDetailActivity"/>
     </application>
 
 </manifest>

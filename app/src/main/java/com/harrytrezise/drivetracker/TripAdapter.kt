@@ -10,7 +10,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-class TripAdapter(private val data: List<Trip>, private val context: Context, private val listener: (Trip) -> Unit) : RecyclerView.Adapter<TripAdapter.ViewHolder>() {
+class TripAdapter(private var data: List<Trip>, private val context: Context, private val listener: (Trip) -> Unit) : RecyclerView.Adapter<TripAdapter.ViewHolder>() {
     val shortMonths = arrayOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripAdapter.ViewHolder {
@@ -33,7 +33,7 @@ class TripAdapter(private val data: List<Trip>, private val context: Context, pr
             val distanceDisplay = item.distance.toString() + " km"
             tripDistance.text = distanceDisplay
             val displayStart = item.startTime.get(Calendar.HOUR).toString() + ":" + item.startTime.get(Calendar.MINUTE).toString()
-            val displayEnd = item.endTime.get(Calendar.HOUR).toString() + ":" + item.endTime.get(Calendar.MINUTE).toString()
+            val displayEnd = item.endTime?.get(Calendar.HOUR).toString() + ":" + item.endTime?.get(Calendar.MINUTE).toString()
             tripStartTime.text = displayStart
             tripEndTime.text = displayEnd
             v.setOnClickListener { listener(item) }
