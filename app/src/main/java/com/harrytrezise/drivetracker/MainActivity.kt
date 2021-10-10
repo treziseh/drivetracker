@@ -102,8 +102,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initData(): List<Trip> {
         val data = mutableListOf<Trip>()
-        data.add(Trip(0, GregorianCalendar(2021, 0, 2, 10, 40), GregorianCalendar(2021, 0, 13, 10, 50), 12000, 12015, 15, "Hamburger"))
-        data.add(Trip(1, GregorianCalendar(2020, 0, 2, 10, 40), GregorianCalendar(2021, 0, 13, 10, 50), 12000, 12015, 15, "Hamburger"))
+        data.add(Trip(0, GregorianCalendar(2021, 0, 2, 10, 40), GregorianCalendar(2021, 0, 2, 10, 50), 12000, 12015, 15, "Hamburger"))
+        data.add(Trip(1, GregorianCalendar(2020, 0, 2, 10, 40), GregorianCalendar(2021, 0, 2, 10, 50), 12000, 12015, 15, "Hamburger"))
         return data
     }
 }

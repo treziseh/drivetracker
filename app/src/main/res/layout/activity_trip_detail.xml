@@ -77,7 +77,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginBottom="256dp"
-        android:text="This trip was"
         app:layout_constraintBottom_toTopOf="@id/editTrip"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/descriptionHeading" />

@@ -25,6 +25,10 @@ class TripDetailActivity : AppCompatActivity() {
 
         detailTrip = intent.getParcelableExtra<Trip>("trip")!!
 
+        initTrip()
+    }
+
+    private fun initTrip() {
         val editButton = findViewById<Button>(R.id.editTrip)
         val deleteButton = findViewById<Button>(R.id.deleteTrip)
 
@@ -88,5 +92,6 @@ class TripDetailActivity : AppCompatActivity() {
                 detailTrip.description = it.description
             }
         }
+        initTrip()
     }
 }
