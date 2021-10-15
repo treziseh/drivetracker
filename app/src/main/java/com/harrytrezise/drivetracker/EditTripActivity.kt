@@ -52,26 +52,27 @@ class EditTripActivity : AppCompatActivity() {
         val desc = editTrip.description
         description.setText(desc)
 
-        val cDay = editTrip.startTime.get(Calendar.DAY_OF_MONTH)
-        val cMonth = editTrip.startTime.get(Calendar.MONTH) + 1
-        val cYear = editTrip.startTime.get(Calendar.YEAR)
-        val dateDisplay = "$cDay/$cMonth/$cYear"
+        val dateMills = editTrip.startTime.timeInMillis
+        val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateMills), ZoneId.systemDefault())
+        val dateDisplay = dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         startDateSelected.setText(dateDisplay)
         val cHour = editTrip.startTime.get(Calendar.HOUR)
         val cMinute = editTrip.startTime.get(Calendar.MINUTE)
-        val timeDisplay = "$cHour:$cMinute"
+        val cHourText = if (cHour < 10) "0$cHour" else cHour
+        val cMinuteText = if (cMinute < 10) "0$cMinute" else cMinute
+        val timeDisplay = "$cHourText:$cMinuteText"
         startTimeSelected.setText(timeDisplay)
 
         if (editTrip.endTime != null) {
-            val dDay = editTrip.endTime?.get(Calendar.DAY_OF_MONTH)
-            var dMonth = editTrip.endTime?.get(Calendar.MONTH)
-            dMonth = dMonth?.plus(1)
-            val dYear = editTrip.endTime?.get(Calendar.YEAR)
-            val dateDisplayA = "$dDay/$dMonth/$dYear"
-            endDateSelected.setText(dateDisplayA)
+            val eDateMills = editTrip.endTime!!.timeInMillis
+            val eDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(eDateMills), ZoneId.systemDefault())
+            val eDateDisplay = eDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            endDateSelected.setText(eDateDisplay)
             val dHour = editTrip.endTime?.get(Calendar.HOUR)
             val dMinute = editTrip.endTime?.get(Calendar.MINUTE)
-            val timeDisplayA = "$dHour:$dMinute"
+            val dHourText = if (dHour!! < 10) "0$dHour" else dHour
+            val dMinuteText = if (dMinute!! < 10) "0$dMinute" else dMinute
+            val timeDisplayA = "$dHourText:$dMinuteText"
             endTimeSelected.setText(timeDisplayA)
         } else {
             endDateSelected.setText(getString(R.string.not_set))
@@ -100,18 +101,25 @@ class EditTripActivity : AppCompatActivity() {
 
         val newEndTime = GregorianCalendar.getInstance()
         val endTimeString = findViewById<TextInputEditText>(R.id.endDate).text.toString() + " " + findViewById<TextInputEditText>(R.id.endTime).text.toString()
-        newEndTime.time = timeFormat.parse(endTimeString)!!
-        editTrip.endTime = newEndTime as GregorianCalendar
+        if (endTimeString.contains("Not set")) {
+            editTrip.endTime = null
+        } else {
+            newEndTime.time = timeFormat.parse(endTimeString)!!
+            editTrip.endTime = newEndTime as GregorianCalendar
+        }
 
         val odoStartInt = findViewById<TextInputEditText>(R.id.odometerStart).text.toString().toInt()
-        val odoEndInt = findViewById<TextInputEditText>(R.id.odometerEnd).text.toString().toInt()
-
-        val distance = odoStartInt - odoEndInt
+        var distance = 0
+        var odoEndInt = 0
+        if (findViewById<TextInputEditText>(R.id.odometerEnd).text.toString() != "Not set") {
+            odoEndInt = findViewById<TextInputEditText>(R.id.odometerEnd).text.toString().toInt()
+            distance = odoEndInt - odoStartInt
+        }
 
         editTrip.odoStart = odoStartInt
         editTrip.odoEnd = odoEndInt
         editTrip.distance = distance
-        editTrip.description = findViewById<TextInputEditText>(R.id.description).toString()
+        editTrip.description = findViewById<TextInputEditText>(R.id.description).text.toString()
     }
 
     private fun returnTrip() {
@@ -149,7 +157,7 @@ class EditTripActivity : AppCompatActivity() {
 
     private fun onDateSelected(dateMills: Long, field: Char) {
         val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateMills), ZoneId.systemDefault())
-        val dateAsFormattedText: String = dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val dateAsFormattedText = dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         if (field == 's') {
             findViewById<TextInputEditText>(R.id.startDate).setText(dateAsFormattedText)
         } else {
