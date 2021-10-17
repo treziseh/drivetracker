@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
@@ -15,18 +18,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var tripList: RecyclerView
 
-    private var data = initData()
+    private lateinit var data: MutableList<Trip>
 
-    private fun newTrip() {
-        val intent = Intent(this, NewTripActivity::class.java)
-        var newID = 0
-        if (data.isNotEmpty()) {
-            newID = data.last().id + 1
-        }
-        intent.run {
-            this.putExtra("newID", newID)
-            activityNewForResult.launch(this)
-        }
+    private val savedTripViewModel: SavedTripViewModel by viewModels {
+        SavedTripViewModelFactory((application as DriveTrackerApplication).repository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,12 +31,19 @@ class MainActivity : AppCompatActivity() {
         val newTripButton = findViewById<FloatingActionButton>(R.id.newTrip)
         newTripButton.setOnClickListener {newTrip()}
 
-        tripList = findViewById<RecyclerView>(R.id.tripList)
+        tripList = findViewById(R.id.tripList)
 
         linearLayoutManager = LinearLayoutManager(this)
         tripList.layoutManager = linearLayoutManager
 
-        setAdapter(data, tripList)
+        dbGet()
+    }
+
+    private fun newTrip() {
+        val intent = Intent(this, NewTripActivity::class.java)
+        intent.run {
+            activityNewForResult.launch(this)
+        }
     }
 
     private fun setAdapter(data: List<Trip>, tripList: RecyclerView) {
@@ -62,9 +64,9 @@ class MainActivity : AppCompatActivity() {
             val returnData = result.data
             val trip = returnData?.getParcelableExtra<Trip>("returnTrip")
             trip?.let {
-                data = data + trip
+                savedTripViewModel.insert(convert(trip))
             }
-            setAdapter(data, tripList)
+            dbGet()
         }
     }
 
@@ -75,20 +77,26 @@ class MainActivity : AppCompatActivity() {
             val delete = returnData?.getBooleanExtra("deleteTrip", false)
             trip?.let {
                 if (delete == true) {
-                    data = data - data[it.id]
-                    updateIDs()
+                    savedTripViewModel.delete(convert(trip))
                 } else {
-                    data[it.id].id = it.id
-                    data[it.id].startTime = it.startTime
-                    data[it.id].endTime = it.endTime
-                    data[it.id].odoStart = it.odoStart
-                    data[it.id].odoEnd = it.odoEnd
-                    data[it.id].distance = it.distance
-                    data[it.id].description = it.description
+                    savedTripViewModel.insert(convert(trip))
                 }
             }
-            setAdapter(data, tripList)
+            dbGet()
         }
+    }
+
+    private fun convert(trip: Trip) : SavedTrip {
+        val saveTrip = SavedTrip(
+            trip.id,
+            trip.startTime.timeInMillis,
+            trip.endTime?.timeInMillis,
+            trip.odoStart,
+            trip.odoEnd,
+            trip.distance,
+            trip.description
+        )
+        return saveTrip
     }
 
     private fun updateIDs() {
@@ -100,10 +108,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initData(): List<Trip> {
-        val data = mutableListOf<Trip>()
-        data.add(Trip(0, GregorianCalendar(2021, 0, 2, 10, 40), GregorianCalendar(2021, 0, 2, 10, 50), 12000, 12015, 15, "Hamburger"))
-        data.add(Trip(1, GregorianCalendar(2020, 0, 2, 10, 40), GregorianCalendar(2021, 0, 2, 10, 50), 12000, 12015, 15, "Hamburger"))
-        return data
+    private fun dbGet() {
+        savedTripViewModel.allSavedTrips.observe(this) { savedTrips ->
+            val loadedTrips = mutableListOf<Trip>()
+            for (savedTrip in savedTrips) {
+                val startCal = GregorianCalendar()
+                startCal.timeInMillis = savedTrip.startTime
+                var endCal: GregorianCalendar?
+                endCal = null
+                if (savedTrip.endTime != null) {
+                    endCal = GregorianCalendar()
+                    endCal.timeInMillis = savedTrip.endTime
+                }
+                val retrievedTrip = Trip(
+                    savedTrip.trip_id,
+                    startCal,
+                    endCal,
+                    savedTrip.odoStart,
+                    savedTrip.odoEnd,
+                    savedTrip.distance,
+                    savedTrip.description
+                )
+                loadedTrips.add(retrievedTrip)
+            }
+
+            setAdapter(loadedTrips, tripList)
+        }
     }
 }
