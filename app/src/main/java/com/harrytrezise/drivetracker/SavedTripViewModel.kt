@@ -8,15 +8,8 @@ import java.util.*
 
 class SavedTripViewModel(private val repository: SavedTripRepository) : ViewModel() {
 
-    // Using LiveData and caching what allWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
-    val allSavedTrips: LiveData<List<SavedTrip>> = repository.allWords.asLiveData()
+    val allSavedTrips: LiveData<List<SavedTrip>> = repository.tripsList.asLiveData()
 
-    /**
-     * Launching a new coroutine to insert the data in a non-blocking way
-     */
     fun insert(savedTrip: SavedTrip) = viewModelScope.launch {
         repository.insert(savedTrip)
     }

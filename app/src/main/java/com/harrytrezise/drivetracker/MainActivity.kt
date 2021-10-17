@@ -3,13 +3,10 @@ package com.harrytrezise.drivetracker
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
@@ -17,8 +14,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: TripAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var tripList: RecyclerView
-
-    private lateinit var data: MutableList<Trip>
 
     private val savedTripViewModel: SavedTripViewModel by viewModels {
         SavedTripViewModelFactory((application as DriveTrackerApplication).repository)
@@ -86,8 +81,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun convert(trip: Trip) : SavedTrip {
-        val saveTrip = SavedTrip(
+    private fun convert(trip: Trip): SavedTrip {
+        return SavedTrip(
             trip.id,
             trip.startTime.timeInMillis,
             trip.endTime?.timeInMillis,
@@ -96,16 +91,6 @@ class MainActivity : AppCompatActivity() {
             trip.distance,
             trip.description
         )
-        return saveTrip
-    }
-
-    private fun updateIDs() {
-        val length = data.size
-        var i = 0
-        while (i < length) {
-            data[i].id = i
-            i += 1
-        }
     }
 
     private fun dbGet() {
