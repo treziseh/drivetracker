@@ -5,16 +5,14 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.textfield.TextInputEditText
-import java.text.SimpleDateFormat
 import java.util.*
 
 class TripDetailActivity : AppCompatActivity() {
     private val shortMonths = arrayOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
-    //private var detailID = 0
+
     private lateinit var detailTrip: Trip
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +21,7 @@ class TripDetailActivity : AppCompatActivity() {
 
         supportActionBar?.title = getString(R.string.view_trip) // set action bar title
 
-        detailTrip = intent.getParcelableExtra<Trip>("trip")!!
+        detailTrip = intent.getParcelableExtra("trip")!!
 
         initTrip()
     }
@@ -47,12 +45,30 @@ class TripDetailActivity : AppCompatActivity() {
         detailTrip.let {
             tripMonth.text = shortMonths[it.startTime.get(Calendar.MONTH)]
             tripDay.text = it.startTime.get(Calendar.DAY_OF_MONTH).toString()
-            val displayDistance = it.distance.toString() + " km"
+            var displayDistance = "0 km"
+            if (it.distance != null) {
+                displayDistance = it.distance.toString() + " km"
+            }
             tripDistance.text = displayDistance
             tripDescription.text = it.description
-            val displayPeriod = it.startTime.get(Calendar.HOUR).toString() + ":" + it.startTime.get(Calendar.MINUTE).toString() + " - " + it.endTime?.get(Calendar.HOUR).toString() + ":" + it.endTime?.get(Calendar.MINUTE).toString()
+
+            val sHour = it.startTime.get(Calendar.HOUR_OF_DAY)
+            val sMinute = it.startTime.get(Calendar.MINUTE)
+            val sHourText = if (sHour < 10) "0$sHour" else sHour
+            val sMinuteText = if (sMinute < 10) "0$sMinute" else sMinute
+            val sTimeDisplay = "$sHourText:$sMinuteText"
+
+            var eTimeDisplay = "N/A"
+            if (it.endTime != null) {
+                val eHour = it.endTime?.get(Calendar.HOUR_OF_DAY)
+                val eMinute = it.endTime?.get(Calendar.MINUTE)
+                val eHourText = if (eHour!! < 10) "0$eHour" else eHour
+                val eMinuteText = if (eMinute!! < 10) "0$sMinute" else sMinute
+                eTimeDisplay = "$eHourText:$eMinuteText"
+            }
+
+            val displayPeriod = "$sTimeDisplay - $eTimeDisplay"
             tripPeriod.text = displayPeriod
-            //detailID = it.id
         }
     }
 
@@ -81,15 +97,21 @@ class TripDetailActivity : AppCompatActivity() {
     private val editTripForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val returnData = result.data
+            val error = returnData?.getBooleanExtra("inputError", true)
             val trip = returnData?.getParcelableExtra<Trip>("returnTrip")
-            trip?.let {
-                detailTrip.id = it.id
-                detailTrip.startTime = it.startTime
-                detailTrip.endTime = it.endTime
-                detailTrip.odoStart = it.odoStart
-                detailTrip.odoEnd = it.odoEnd
-                detailTrip.distance = it.distance
-                detailTrip.description = it.description
+            if (error == false) {
+                trip?.let {
+                    detailTrip.id = it.id
+                    detailTrip.startTime = it.startTime
+                    detailTrip.endTime = it.endTime
+                    detailTrip.odoStart = it.odoStart
+                    detailTrip.odoEnd = it.odoEnd
+                    detailTrip.distance = it.distance
+                    detailTrip.description = it.description
+                }
+            } else {
+                val errToast = Toast.makeText(applicationContext, "Input Errors, Trip Not Updated", Toast.LENGTH_SHORT)
+                errToast.show()
             }
         }
         initTrip()

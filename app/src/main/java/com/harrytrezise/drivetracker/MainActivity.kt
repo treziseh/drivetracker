@@ -3,6 +3,7 @@ package com.harrytrezise.drivetracker
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
 
         linearLayoutManager = LinearLayoutManager(this)
         tripList.layoutManager = linearLayoutManager
+
+        repDisplay()
 
         dbGet()
     }
@@ -118,6 +121,22 @@ class MainActivity : AppCompatActivity() {
             }
 
             setAdapter(loadedTrips, tripList)
+        }
+    }
+
+    private fun repDisplay() {
+        val current = GregorianCalendar()
+        val fyStart = GregorianCalendar(current.get(Calendar.YEAR), 6, 1).timeInMillis
+        savedTripViewModel.allSavedTrips.observe(this) { savedTrips ->
+            var fyTotal = 0
+            for (savedTrip in savedTrips) {
+                if (savedTrip.startTime > fyStart && savedTrip.distance != null) {
+                    fyTotal += savedTrip.distance
+                }
+            }
+            val retString = fyTotal.toString()
+            val retDisplay = "Financial Year: $retString km"
+            findViewById<TextView>(R.id.report).text = retDisplay
         }
     }
 }

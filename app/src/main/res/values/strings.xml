@@ -16,4 +16,5 @@
     <string name="not_set">Not set</string>
     <string name="odometer_start">Odometer Start</string>
     <string name="odometer_end">Odometer End</string>
+    <string name="financial_year">Financial Year</string>
 </resources>

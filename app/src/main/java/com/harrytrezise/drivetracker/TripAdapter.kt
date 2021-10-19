@@ -30,10 +30,21 @@ class TripAdapter(private var data: List<Trip>, private val context: Context, pr
         fun bind(item: Trip) {
             tripMonth.text = shortMonths[item.startTime.get(Calendar.MONTH)]
             tripDay.text = item.startTime.get(Calendar.DAY_OF_MONTH).toString()
-            val distanceDisplay = item.distance.toString() + " km"
+            val distanceDisplay = if (item.distance.toString() != "null") item.distance.toString() + " km" else "N/A"
             tripDistance.text = distanceDisplay
-            val displayStart = item.startTime.get(Calendar.HOUR).toString() + ":" + item.startTime.get(Calendar.MINUTE).toString()
-            val displayEnd = item.endTime?.get(Calendar.HOUR).toString() + ":" + item.endTime?.get(Calendar.MINUTE).toString()
+            val sHour = item.startTime.get(Calendar.HOUR_OF_DAY)
+            val sMinute = item.startTime.get(Calendar.MINUTE)
+            val sHourText = if (sHour < 10) "0$sHour" else sHour
+            val sMinuteText = if (sMinute < 10) "0$sMinute" else sMinute
+            val displayStart = "$sHourText:$sMinuteText"
+            var displayEnd = "N/A"
+            if (item.endTime != null) {
+                val eHour = item.endTime?.get(Calendar.HOUR_OF_DAY)
+                val eMinute = item.endTime?.get(Calendar.MINUTE)
+                val eHourText = if (eHour!! < 10) "0$eHour" else eHour
+                val eMinuteText = if (eMinute!! < 10) "0$eMinute" else eMinute
+                displayEnd = "$eHourText:$eMinuteText"
+            }
             tripStartTime.text = displayStart
             tripEndTime.text = displayEnd
             v.setOnClickListener { listener(item) }

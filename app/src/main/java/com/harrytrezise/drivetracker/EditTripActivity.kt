@@ -2,10 +2,9 @@ package com.harrytrezise.drivetracker
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -20,6 +19,8 @@ import java.util.*
 class EditTripActivity : AppCompatActivity() {
     private lateinit var editTrip: Trip
 
+    private var inputError = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip_edit)
@@ -28,7 +29,7 @@ class EditTripActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.edit_trip)
 
         val startDateSelected = findViewById<TextInputEditText>(R.id.startDate)
-        val startTimeSelected = findViewById<TextInputEditText>(R.id.startTime)
+        val startTimeSelected = findViewById<TextInputEditText>(R.id.nStartTime)
         val endDateSelected = findViewById<TextInputEditText>(R.id.endDate)
         val endTimeSelected = findViewById<TextInputEditText>(R.id.endTime)
 
@@ -48,6 +49,17 @@ class EditTripActivity : AppCompatActivity() {
             odometerEnd.setText(getString(R.string.not_set))
         }
 
+        odometerEnd.doAfterTextChanged {
+            if (odometerEnd.text.toString() != "" && odometerEnd.text.toString() != "0") {
+                if (odometerEnd.text.toString().toInt() <= odometerStart.text.toString().toInt()) {
+                    odometerEnd.error = "Must be greater than Odometer Start"
+                    inputError = true
+                } else {
+                    inputError = false
+                }
+            }
+        }
+
         val description = findViewById<TextInputEditText>(R.id.description)
         val desc = editTrip.description
         description.setText(desc)
@@ -56,7 +68,7 @@ class EditTripActivity : AppCompatActivity() {
         val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateMills), ZoneId.systemDefault())
         val dateDisplay = dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         startDateSelected.setText(dateDisplay)
-        val cHour = editTrip.startTime.get(Calendar.HOUR)
+        val cHour = editTrip.startTime.get(Calendar.HOUR_OF_DAY)
         val cMinute = editTrip.startTime.get(Calendar.MINUTE)
         val cHourText = if (cHour < 10) "0$cHour" else cHour
         val cMinuteText = if (cMinute < 10) "0$cMinute" else cMinute
@@ -68,7 +80,7 @@ class EditTripActivity : AppCompatActivity() {
             val eDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(eDateMills), ZoneId.systemDefault())
             val eDateDisplay = eDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             endDateSelected.setText(eDateDisplay)
-            val dHour = editTrip.endTime?.get(Calendar.HOUR)
+            val dHour = editTrip.endTime?.get(Calendar.HOUR_OF_DAY)
             val dMinute = editTrip.endTime?.get(Calendar.MINUTE)
             val dHourText = if (dHour!! < 10) "0$dHour" else dHour
             val dMinuteText = if (dMinute!! < 10) "0$dMinute" else dMinute
@@ -81,8 +93,8 @@ class EditTripActivity : AppCompatActivity() {
 
         startDateSelected.setOnClickListener { showDatePicker(editTrip.startTime, 's') }
         endDateSelected.setOnClickListener { showDatePicker(editTrip.startTime, 'e') }
-        startTimeSelected.setOnClickListener { showTimePicker(editTrip.startTime.get(Calendar.HOUR), editTrip.startTime.get(Calendar.MINUTE), 's') }
-        endTimeSelected.setOnClickListener { showTimePicker(editTrip.endTime?.get(Calendar.HOUR), editTrip.endTime?.get(Calendar.MINUTE), 'e') }
+        startTimeSelected.setOnClickListener { showTimePicker(editTrip.startTime.get(Calendar.HOUR_OF_DAY), editTrip.startTime.get(Calendar.MINUTE), 's') }
+        endTimeSelected.setOnClickListener { showTimePicker(editTrip.endTime?.get(Calendar.HOUR_OF_DAY), editTrip.endTime?.get(Calendar.MINUTE), 'e') }
 
     }
 
@@ -95,7 +107,7 @@ class EditTripActivity : AppCompatActivity() {
     private fun setValues() {
         val newStartTime = GregorianCalendar.getInstance()
         val timeFormat = SimpleDateFormat("dd/MM/yyyy k:m", Locale.ENGLISH)
-        val startTimeString = findViewById<TextInputEditText>(R.id.startDate).text.toString() + " " + findViewById<TextInputEditText>(R.id.startTime).text.toString()
+        val startTimeString = findViewById<TextInputEditText>(R.id.startDate).text.toString() + " " + findViewById<TextInputEditText>(R.id.nStartTime).text.toString()
         newStartTime.time = timeFormat.parse(startTimeString)!!
         editTrip.startTime = newStartTime as GregorianCalendar
 
@@ -111,8 +123,9 @@ class EditTripActivity : AppCompatActivity() {
         val odoStartInt = findViewById<TextInputEditText>(R.id.odometerStart).text.toString().toInt()
         var distance = 0
         var odoEndInt = 0
-        if (findViewById<TextInputEditText>(R.id.odometerEnd).text.toString() != "Not set") {
-            odoEndInt = findViewById<TextInputEditText>(R.id.odometerEnd).text.toString().toInt()
+        val odoEndStr = findViewById<TextInputEditText>(R.id.odometerEnd).text.toString()
+        if (odoEndStr != "Not set" && odoEndStr != "" && odoEndStr != "0") {
+            odoEndInt = odoEndStr.toInt()
             distance = odoEndInt - odoStartInt
         }
 
@@ -125,6 +138,7 @@ class EditTripActivity : AppCompatActivity() {
     private fun returnTrip() {
         val returnIntent = intent.run {
             putExtra("returnTrip", editTrip)
+            putExtra("inputError", inputError)
         }
         setResult(Activity.RESULT_OK, returnIntent)
     }
@@ -172,7 +186,7 @@ class EditTripActivity : AppCompatActivity() {
 
         val display = "$hourText:$minuteText"
         if (field == 's') {
-            findViewById<TextInputEditText>(R.id.startTime).setText(display)
+            findViewById<TextInputEditText>(R.id.nStartTime).setText(display)
         } else {
             findViewById<TextInputEditText>(R.id.endTime).setText(display)
         }

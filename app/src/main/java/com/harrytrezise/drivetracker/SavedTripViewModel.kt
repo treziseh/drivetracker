@@ -20,7 +20,7 @@ class SavedTripViewModel(private val repository: SavedTripRepository) : ViewMode
 }
 
 class SavedTripViewModelFactory(private val repository: SavedTripRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>) : T {
         if (modelClass.isAssignableFrom(SavedTripViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return SavedTripViewModel(repository) as T
