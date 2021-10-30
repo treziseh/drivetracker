@@ -7,8 +7,9 @@
 
     <LinearLayout
         android:id="@+id/calendarIcon"
+        android:background="@drawable/calendar_border"
         android:layout_width="126dp"
-        android:layout_height="128dp"
+        android:layout_height="100dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:orientation="vertical"
@@ -21,7 +22,7 @@
             android:id="@+id/tripMonth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/orange_light"
+            android:background="@drawable/calendar_header"
             android:gravity="center_horizontal"
             android:textColor="@color/black"
             android:textStyle="bold" />
@@ -31,7 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textSize="60sp"
+            android:paddingTop="10dp"
+            android:textSize="36sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -39,7 +41,7 @@
         android:id="@+id/tripDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="60sp"
+        android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/tripPeriod"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,6 +85,7 @@
 
     <Button
         android:id="@+id/editTrip"
+        android:height="70dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/grey_light"
@@ -94,6 +97,7 @@
 
     <Button
         android:id="@+id/deleteTrip"
+        android:height="70dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/orange_dark"

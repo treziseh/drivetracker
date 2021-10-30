@@ -46,7 +46,7 @@ class EditTripActivity : AppCompatActivity() {
             val odoEnd = editTrip.odoEnd.toString()
             odometerEnd.setText(odoEnd)
         } else {
-            odometerEnd.setText(getString(R.string.not_set))
+            odometerEnd.setText("0")
         }
 
         odometerEnd.doAfterTextChanged {

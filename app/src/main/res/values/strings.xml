@@ -17,4 +17,6 @@
     <string name="odometer_start">Odometer Start</string>
     <string name="odometer_end">Odometer End</string>
     <string name="financial_year">Financial Year</string>
+    <string name="end_trip">End Trip</string>
+    <string name="finish">Finish</string>
 </resources>
