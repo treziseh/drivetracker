@@ -34,7 +34,33 @@ class MainActivity : AppCompatActivity() {
 
         repDisplay()
 
-        dbGet()
+        savedTripViewModel.allSavedTrips.observe(this) { savedTrips ->
+            val loadedTrips = mutableListOf<Trip>()
+            for (savedTrip in savedTrips) {
+                val startCal = GregorianCalendar()
+                startCal.timeInMillis = savedTrip.startTime
+                var endCal: GregorianCalendar?
+                endCal = null
+                if (savedTrip.endTime != null) {
+                    endCal = GregorianCalendar()
+                    endCal.timeInMillis = savedTrip.endTime
+                }
+                val retrievedTrip = Trip(
+                    savedTrip.tripId,
+                    startCal,
+                    endCal,
+                    savedTrip.odoStart,
+                    savedTrip.odoEnd,
+                    savedTrip.distance,
+                    savedTrip.description
+                )
+                loadedTrips.add(retrievedTrip)
+            }
+
+            setAdapter(loadedTrips, tripList)
+        }
+
+        //dbGet()
     }
 
     private fun newTrip() {
@@ -45,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setAdapter(data: List<Trip>, tripList: RecyclerView) {
-        adapter = TripAdapter(data, applicationContext) { showTripDetail(it) }
+        adapter = TripAdapter(data) { showTripDetail(it) }
         tripList.adapter = adapter
     }
 
@@ -64,7 +90,6 @@ class MainActivity : AppCompatActivity() {
             trip?.let {
                 savedTripViewModel.insert(convert(trip))
             }
-            dbGet()
         }
     }
 
@@ -80,7 +105,6 @@ class MainActivity : AppCompatActivity() {
                     savedTripViewModel.insert(convert(trip))
                 }
             }
-            dbGet()
         }
     }
 
@@ -94,34 +118,6 @@ class MainActivity : AppCompatActivity() {
             trip.distance,
             trip.description
         )
-    }
-
-    private fun dbGet() {
-        savedTripViewModel.allSavedTrips.observe(this) { savedTrips ->
-            val loadedTrips = mutableListOf<Trip>()
-            for (savedTrip in savedTrips) {
-                val startCal = GregorianCalendar()
-                startCal.timeInMillis = savedTrip.startTime
-                var endCal: GregorianCalendar?
-                endCal = null
-                if (savedTrip.endTime != null) {
-                    endCal = GregorianCalendar()
-                    endCal.timeInMillis = savedTrip.endTime
-                }
-                val retrievedTrip = Trip(
-                    savedTrip.trip_id,
-                    startCal,
-                    endCal,
-                    savedTrip.odoStart,
-                    savedTrip.odoEnd,
-                    savedTrip.distance,
-                    savedTrip.description
-                )
-                loadedTrips.add(retrievedTrip)
-            }
-
-            setAdapter(loadedTrips, tripList)
-        }
     }
 
     private fun repDisplay() {

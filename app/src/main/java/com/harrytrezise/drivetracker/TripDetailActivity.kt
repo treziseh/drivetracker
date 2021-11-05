@@ -63,7 +63,7 @@ class TripDetailActivity : AppCompatActivity() {
                 val eHour = it.endTime?.get(Calendar.HOUR_OF_DAY)
                 val eMinute = it.endTime?.get(Calendar.MINUTE)
                 val eHourText = if (eHour!! < 10) "0$eHour" else eHour
-                val eMinuteText = if (eMinute!! < 10) "0$sMinute" else sMinute
+                val eMinuteText = if (eMinute!! < 10) "0$eMinute" else eMinute
                 eTimeDisplay = "$eHourText:$eMinuteText"
             }
 

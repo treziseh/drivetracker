@@ -1,17 +1,14 @@
 package com.harrytrezise.drivetracker
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-class TripAdapter(private var data: List<Trip>, private val context: Context, private val listener: (Trip) -> Unit) : RecyclerView.Adapter<TripAdapter.ViewHolder>() {
-    val shortMonths = arrayOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
+class TripAdapter(private var data: List<Trip>, private val listener: (Trip) -> Unit) : RecyclerView.Adapter<TripAdapter.ViewHolder>() {
+    private val shortMonths = arrayOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripAdapter.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

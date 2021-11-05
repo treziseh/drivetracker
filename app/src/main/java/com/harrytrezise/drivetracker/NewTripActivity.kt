@@ -40,7 +40,7 @@ class NewTripActivity : AppCompatActivity() {
         startDateDisplay.text = dateDisplay
 
         val odoInput = findViewById<TextInputEditText>(R.id.startOdo)
-        val number = Regex("[0-9]+") // Regex date pattern check DD/MM/YYYY
+        val number = Regex("[0-9]+")
         odoInput.doAfterTextChanged {
             if (odoInput.text.toString() == "") {
                 odoInput.error = "Odometer reading cannot be empty"
